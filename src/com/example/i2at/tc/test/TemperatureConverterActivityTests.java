@@ -108,4 +108,8 @@ public class TemperatureConverterActivityTests extends ActivityInstrumentationTe
 		final double delta = Math.abs(expected - actual);
 		assertTrue("delta=" + delta, delta < 0.005);
 	}
+
+	public void testForceFail() {
+		fail("Forced fail");
+	}
 }
