@@ -64,6 +64,7 @@
     <target name="run-tests" depends="-install-tested-project, install"
             description="Runs tests from the package defined in test.package property">
         <property name="reports.dir" value="${out.dir}/test-reports"/>
+        <property name="report.name" value="test-results.xml"/>
         <property name="files.dir" value="/data/data/${manifest.package}/files"/>
 
         <echo>Cleaning up previous test reports in ${files.dir}...</echo>
@@ -87,8 +88,11 @@
             <arg value="coverage" />
             <arg value="@{emma.enabled}" />
             <arg value="-e" />
+            <arg value="outdir" />
+	    <arg value="${files.dir}" />
+            <arg value="-e" />
             <arg value="outfile" />
-            <arg value="test-results.xml" />
+            <arg value="${report.name}" />
             <arg value="${manifest.package}/${test.runner}" />
         </exec>
         
@@ -97,8 +101,8 @@
         <exec executable="${adb}" failonerror="true">
             <arg line="${adb.device.arg}"/>
             <arg value="pull" />
-            <arg value="${files.dir}/test-results.xml" />
-            <arg value="${reports.dir}/test-results.xml" />
+            <arg value="${files.dir}/${report.name}" />
+            <arg value="${reports.dir}/${report.name}" />
         </exec>
     </target>
 
