@@ -65,7 +65,7 @@
             description="Runs tests from the package defined in test.package property">
         <property name="reports.dir" value="${out.dir}/test-reports"/>
         <property name="report.name" value="test-results.xml"/>
-        <property name="files.dir" value="/data/data/${manifest.package}/files"/>
+        <property name="files.dir" value="/data/data/${tested.manifest.package}/files"/>
 
         <echo>Cleaning up previous test reports in ${files.dir}...</echo>
         <delete dir="${reports.dir}"/>
@@ -87,9 +87,6 @@
             <arg value="-e" />
             <arg value="coverage" />
             <arg value="@{emma.enabled}" />
-            <arg value="-e" />
-            <arg value="outdir" />
-	    <arg value="${files.dir}" />
             <arg value="-e" />
             <arg value="outfile" />
             <arg value="${report.name}" />
