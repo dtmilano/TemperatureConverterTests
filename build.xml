@@ -59,6 +59,50 @@
     </target>
 -->
 
+
+<!-- Customized run-tests target -->
+    <target name="run-tests" depends="-install-tested-project, install"
+            description="Runs tests from the package defined in test.package property">
+        <property name="reports.dir" value="${out.dir}/test-reports"/>
+        <property name="files.dir" value="/data/data/${manifest.package}/files"/>
+
+        <echo>Cleaning up previous test reports in ${files.dir}...</echo>
+        <delete dir="${reports.dir}"/>
+        <exec executable="${adb}" failonerror="true">
+            <arg line="${adb.device.arg}" />
+            <arg value="shell" />
+            <arg value="rm" />
+            <arg value="-f" />
+            <arg value="${files.dir}/*" />
+        </exec>
+
+        <echo>Running tests...</echo>
+        <exec executable="${adb}" failonerror="true">
+            <arg line="${adb.device.arg}"/>
+            <arg value="shell" />
+            <arg value="am" />
+            <arg value="instrument" />
+            <arg value="-w" />
+            <arg value="-e" />
+            <arg value="coverage" />
+            <arg value="@{emma.enabled}" />
+            <arg value="-e" />
+            <arg value="outfile" />
+            <arg value="test-results.xml" />
+            <arg value="${manifest.package}/${test.runner}" />
+        </exec>
+        
+        <echo>Downloading XML test report from ${files.dir}...</echo>
+        <mkdir dir="${reports.dir}"/>
+        <exec executable="${adb}" failonerror="true">
+            <arg line="${adb.device.arg}"/>
+            <arg value="pull" />
+            <arg value="${files.dir}/test-results.xml" />
+            <arg value="${reports.dir}/test-results.xml" />
+        </exec>
+    </target>
+
+
     <!-- Execute the Android Setup task that will setup some properties
          specific to the target, and import the build rules files.
 
@@ -82,16 +126,5 @@
              - customize to your needs.
     -->
     <setup />
-
-    <target name="fetch-test-report" depends="run-tests">
-        <echo>Downloading XML test report...</echo>
-        <mkdir dir="${reports.dir}"/>
-        <exec executable="${adb}" failonerror="true">
-	    <arg line="${adb.device.arg}"/>
-            <arg value="pull" />
-            <arg value="/data/data/${manifest.package}/files/junit-report.xml" />
-            <arg value="${reports.dir}/junit-report.xml" />
-        </exec>
-    </target>
 
 </project>
