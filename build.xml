@@ -6,6 +6,9 @@
     <!-- this should be commented out otherwise Eclipse gives an error -->
     <!-- default="help" -->
 	
+    <!-- diego: added test runner -->
+    <property name="test.runner" value="com.zutubi.android.junitreport.JUnitReportTestRunner" />
+
 <!-- The local.properties file is created and updated by the 'android'
      tool.
      It contains the path to the SDK. It should *NOT* be checked into
@@ -80,5 +83,16 @@
              - customize to your needs.
     -->
     <setup />
+
+    <target name="fetch-test-report" depends="run-tests">
+        <echo>Downloading XML test report...</echo>
+        <mkdir dir="${reports.dir}"/>
+        <exec executable="${adb}" failonerror="true">
+	    <arg line="${adb.device.arg}"/>
+            <arg value="pull" />
+            <arg value="/data/data/${manifest.package}/files/junit-report.xml" />
+            <arg value="${reports.dir}/junit-report.xml" />
+        </exec>
+    </target>
 
 </project>
