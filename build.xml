@@ -2,12 +2,11 @@
 
 <project name="TemperatureConverterTest" >
 
-	<!-- diego -->
+    <!-- diego -->
     <!-- this should be commented out otherwise Eclipse gives an error -->
     <!-- default="help" -->
 	
-    <!-- diego: added test runner -->
-    <property name="test.runner" value="com.zutubi.android.junitreport.JUnitReportTestRunner" />
+    <property name="test.runner" value="com.neenbedankt.android.test.XMLInstrumentationTestRunner" />
 
 <!-- The local.properties file is created and updated by the 'android'
      tool.
