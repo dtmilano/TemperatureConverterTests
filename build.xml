@@ -63,18 +63,18 @@
 <!-- Customized run-tests target -->
     <target name="run-tests" depends="-install-tested-project, install"
             description="Runs tests from the package defined in test.package property">
-        <property name="reports.dir" value="${out.dir}/test-reports"/>
+        <property name="reports.dir.local" value="${out.dir}/test-reports"/>
+        <property name="reports.dir.remote" value="/data/data/${tested.manifest.package}/files"/>
         <property name="report.name" value="test-results.xml"/>
-        <property name="files.dir" value="/data/data/${tested.manifest.package}/files"/>
 
-        <echo>Cleaning up previous test reports in ${files.dir}...</echo>
-        <delete dir="${reports.dir}"/>
+        <echo>Cleaning up previous test reports in ${reports.dir.remote}...</echo>
+        <delete dir="${reports.dir.local}"/>
         <exec executable="${adb}" failonerror="true">
             <arg line="${adb.device.arg}" />
             <arg value="shell" />
             <arg value="rm" />
             <arg value="-f" />
-            <arg value="${files.dir}/*" />
+            <arg value="${reports.dir.remote}/*" />
         </exec>
 
         <echo>Running tests...</echo>
@@ -93,13 +93,13 @@
             <arg value="${manifest.package}/${test.runner}" />
         </exec>
         
-        <echo>Downloading XML test report from ${files.dir}...</echo>
-        <mkdir dir="${reports.dir}"/>
+        <echo>Downloading XML test report from ${reports.dir.remote}...</echo>
+        <mkdir dir="${reports.dir.local}"/>
         <exec executable="${adb}" failonerror="true">
             <arg line="${adb.device.arg}"/>
             <arg value="pull" />
-            <arg value="${files.dir}/${report.name}" />
-            <arg value="${reports.dir}/${report.name}" />
+            <arg value="${reports.dir.remote}/${report.name}" />
+            <arg value="${reports.dir.local}/${report.name}" />
         </exec>
     </target>
 
