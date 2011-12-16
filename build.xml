@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<project name="TemperatureConverter" default="help">
 
-<project name="TemperatureConverterTest" >
+    <!-- The local.properties file is created and updated by the 'android' tool.
+         It contains the path to the SDK. It should *NOT* be checked into
+         Version Control Systems. -->
+    <loadproperties srcFile="local.properties" />
 
-    <!-- diego -->
-    <!-- this should be commented out otherwise Eclipse gives an error -->
-    <!-- default="help" -->
-	
-    <property name="test.runner" value="com.neenbedankt.android.test.XMLInstrumentationTestRunner" />
-
-<!-- The local.properties file is created and updated by the 'android'
-     tool.
-     It contains the path to the SDK. It should *NOT* be checked into
-     Version Control Systems. -->
-    <property file="local.properties" />
-
-    <!-- The build.properties file can be created by you and is never touched
-         by the 'android' tool. This is the place to change some of the
-         default property values used by the Ant rules.
+    <!-- The ant.properties file can be created by you. It is only edited by the
+         'android' tool to add properties to it.
+         This is the place to change some Ant specific build properties.
          Here are some properties you may want to change/update:
 
          source.dir
              The name of the source directory. Default is 'src'.
          out.dir
              The name of the output directory. Default is 'bin'.
+
+         For other overridable properties, look at the beginning of the rules
+         files in the SDK, at tools/ant/build.xml
 
          Properties related to the SDK location or the project target should
          be updated using the 'android' tool with the 'update' action.
@@ -31,17 +26,24 @@
          application and should be checked into Version Control Systems.
 
          -->
-    <property file="build.properties" />
+    <property file="ant.properties" />
 
-    <!-- The default.properties file is created and updated by the 'android'
+    <!-- The project.properties file is created and updated by the 'android'
          tool, as well as ADT.
+
+         This contains project specific properties such as project target, and library
+         dependencies. Lower level build properties are stored in ant.properties
+         (or in .classpath for Eclipse projects).
+
          This file is an integral part of the build system for your
          application and should be checked into Version Control Systems. -->
-    <property file="default.properties" />
+    <loadproperties srcFile="project.properties" />
 
-
-    <!-- Required pre-setup import -->
-    <import file="${sdk.dir}/tools/ant/pre_setup.xml" />
+    <!-- quick check on sdk.dir -->
+    <fail
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project'"
+            unless="sdk.dir"
+    />
 
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
@@ -52,80 +54,32 @@
     <target name="-pre-compile">
     </target>
 
-    [This is typically used for code obfuscation.
-     Compiled code location: ${out.classes.absolute.dir}
-     If this is not done in place, override ${out.dex.input.absolute.dir}]
+    /* This is typically used for code obfuscation.
+       Compiled code location: ${out.classes.absolute.dir}
+       If this is not done in place, override ${out.dex.input.absolute.dir} */
     <target name="-post-compile">
     </target>
 -->
 
-
-<!-- Customized run-tests target -->
-    <target name="run-tests" depends="-install-tested-project, install"
-            description="Runs tests from the package defined in test.package property">
-        <property name="reports.dir.local" value="${out.dir}/test-reports"/>
-        <property name="reports.dir.remote" value="/data/data/${tested.manifest.package}/files"/>
-        <property name="report.name" value="test-results.xml"/>
-
-        <echo>Cleaning up previous test reports in ${reports.dir.remote}...</echo>
-        <delete dir="${reports.dir.local}"/>
-        <exec executable="${adb}" failonerror="true">
-            <arg line="${adb.device.arg}" />
-            <arg value="shell" />
-            <arg value="rm" />
-            <arg value="-f" />
-            <arg value="${reports.dir.remote}/*" />
-        </exec>
-
-        <echo>Running tests...</echo>
-        <exec executable="${adb}" failonerror="true">
-            <arg line="${adb.device.arg}"/>
-            <arg value="shell" />
-            <arg value="am" />
-            <arg value="instrument" />
-            <arg value="-w" />
-            <arg value="-e" />
-            <arg value="coverage" />
-            <arg value="@{emma.enabled}" />
-            <arg value="-e" />
-            <arg value="outfile" />
-            <arg value="${report.name}" />
-            <arg value="${manifest.package}/${test.runner}" />
-        </exec>
-        
-        <echo>Downloading XML test report from ${reports.dir.remote}...</echo>
-        <mkdir dir="${reports.dir.local}"/>
-        <exec executable="${adb}" failonerror="true">
-            <arg line="${adb.device.arg}"/>
-            <arg value="pull" />
-            <arg value="${reports.dir.remote}/${report.name}" />
-            <arg value="${reports.dir.local}/${report.name}" />
-        </exec>
-    </target>
-
-
-    <!-- Execute the Android Setup task that will setup some properties
-         specific to the target, and import the build rules files.
-
-         The rules file is imported from
-            <SDK>/tools/ant/
-         Depending on the project type it can be either:
-         - main_rules.xml
-         - lib_rules.xml
-         - test_rules.xml
+    <!-- Import the actual build file.
 
          To customize existing targets, there are two options:
          - Customize only one target:
              - copy/paste the target into this file, *before* the
-               <setup> task.
+               <import> task.
              - customize it to your needs.
-         - Customize the whole script.
+         - Customize the whole content of build.xml
              - copy/paste the content of the rules files (minus the top node)
-               into this file, *after* the <setup> task
-             - disable the import of the rules by changing the setup task
-               below to <setup import="false" />.
+               into this file, replacing the <import> task.
              - customize to your needs.
+
+         ***********************
+         ****** IMPORTANT ******
+         ***********************
+         In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
+         in order to avoid having your file be overridden by tools such as "android update project"
     -->
-    <setup />
+    <!-- version-tag: 1 -->
+    <import file="${sdk.dir}/tools/ant/build.xml" />
 
 </project>
